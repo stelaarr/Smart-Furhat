@@ -1,11 +1,15 @@
 import cv2
-from deepface import DeepFace
-
+import torch
+from approach.PreData import REN_get_item
+from PIL import Image
 # Parameters
 FRAME_INTERVAL = 50  # Analyze every 50th frame
 
 # Initialize webcam
 cap = cv2.VideoCapture(0)
+
+# Load pre-trained model and parameters
+labels, device, model, transform, face_tracker = REN_get_item()
 
 # Variables to store results
 emotion_buffer = []
@@ -21,9 +25,18 @@ while True:
     frame_count += 1
     if frame_count % FRAME_INTERVAL == 0:
         try:
-            # Change here to our Emotion Detection Model
-            analysis = DeepFace.analyze(frame, actions=['emotion'], enforce_detection=False)
-            dominant_emotion = analysis[0]['dominant_emotion']
+            # Detect facebox
+            gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            faces = face_tracker.detectMultiScale(gray_frame) 
+            for (x1, y1, w, h) in faces:
+                face_frame = frame[y1:y1+h, x1:x1+w]
+                
+                # Use ResEmoteNet to detect emotion
+                face_frame_tensor = transform(Image.fromarray(face_frame)).unsqueeze(0).to(device)
+                with torch.no_grad():
+                    output = model(face_frame_tensor)
+                    dominant_emotion = labels[torch.argmax(output, 1).item()]
+                break
             print(f"Detected Emotion: {dominant_emotion}")
 
             # Store emotion for smoothing
