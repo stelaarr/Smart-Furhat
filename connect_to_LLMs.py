@@ -1,23 +1,22 @@
 from furhat_remote_api import FurhatRemoteAPI
 import google.generativeai as genai
-import gestures_definitions
 
-# 設定 Google Gemini API
+# Set up Google Gemini API
 api_key = 'AIzaSyCLhiQiYG5lkWEEXacUYyzqoLMm-xdTFpc'
 genai.configure(api_key=api_key)
 
-# 初始化 Furhat
+# Initialize Furhat
 furhat = FurhatRemoteAPI("localhost")
 furhat.say(text="Welcome! Good to see you tonight. Take a seat wherever you like. How’s your day been so far?")
 
-# 初始化對話歷史
+# Initialize conversation history
 conversation_history = []
 
-# 模擬偵測使用者表情
+# Simulate detecting user emotion
 def detect_user_emotion():
-    return "angry"  # 模擬情緒（可擴展）
+    return "angry"  # Simulate emotion (can be extended)
 
-# 接收用戶輸入
+# Receive user input
 def get_user_input():
     try:
         response = furhat.listen()
@@ -31,7 +30,7 @@ def get_user_input():
         # furhat.say(text="Something went wrong while listening. Could you try again?")
         return None
 
-# 呼叫 LLM（Google Gemini API）
+# Call LLM (Google Gemini API)
 def call_gemini_api(prompt):
     try:
         model = genai.GenerativeModel('gemini-pro')
@@ -44,45 +43,210 @@ def call_gemini_api(prompt):
         print(f"Error calling Google Gemini API: {e}")
         return "Sorry, I encountered an issue and couldn't process your request."
 
-# Furhat 執行表情
+# Angry expression
+def Perform_AngryExpression():
+    furhat.gesture(body={
+    "frames": [
+    {
+        "time": [1.0,2,2.2],    # A list of times can be provided, at those times the params will be executed.
+        "persist": True,
+        "params": {
+            "BROW_In_LEFT":1.0,
+            "BROW_In_RIGHT":1.0,
+            "EXPR_ANGER": 1.0,
+            "NECK_TILT": 5
+        }
+    },
+    {
+        "time": [5.0],
+        "persist": False,
+        "params": {"reset": True}
+    }],
+    "class": "furhatos.gestures.Gesture"
+    })
+
+# Disgust expression
+def Perform_DisgustExpression():
+    furhat.gesture(body={
+    "frames":[
+    {
+      "time":[1.0,2.0],
+      "persist":True,
+      "params":{
+        "BROW_IN_LEFT":1,
+        "BROW_IN_RIGHT":1,
+        "NECK_ROLL":8.0,
+        "EXPR_DISGUST":1
+        }
+    },
+    {
+      "time":[5.0],
+      "persist":False,
+      "params":{
+        "reset":True
+        }
+    }],
+    "class": "furhatos.gestures.Gesture"
+    })
+
+# Fear expression
+def Perform_FearExpression():
+    furhat.gesture(body={
+    "frames":[
+    {
+      "time":[1.0,1,5,1.5,2.0],
+      "persist":True,
+      "params":{
+        "BROW_IN_LEFT":1,
+        "BROW_IN_RIGHT":1,
+        "LOOK_DOWN":0.35,
+        "EXPR_FEAR":1.0,
+        "NECK_PAN":15
+        }
+    },
+    {
+      "time":[5.0],
+      "persist":False,
+      "params":{
+        "reset":True
+        }
+    }],
+    "class": "furhatos.gestures.Gesture"
+    })
+
+# Happy expression
+def Perform_HappyExpression():
+    furhat.gesture(body={
+    "frames":[
+    {
+      "time":[1.0,1.5],
+      "persist":False,
+      "params":{
+        "BROW_UP_LEFT":1,
+        "BROW_UP_RIGHT":1,
+        "SMILE_OPEN":0.8,
+        }
+    },
+    {
+      "time":[5.0],
+      "persist":False,
+      "params":{
+        "reset":True
+        }
+    }],
+    "class": "furhatos.gestures.Gesture"
+    })
+
+# Neutral expression
+def Perform_NeutralExpression():
+    furhat.gesture(body={
+    "frames":[
+    {
+      "time":[1.0],
+      "persist":False,
+      "params":{
+        "PHONE_B_M_P": 1.0,
+        }
+    },
+    {
+      "time":[5.0],
+      "persist":False,
+      "params":{
+        "reset":True
+        }
+    }],
+    "class": "furhatos.gestures.Gesture"
+    })
+
+# Sad expression
+def Perform_SadExpression():
+    furhat.gesture(body={
+    "frames":[
+    {
+      "time":[1.0,2.0,3.0,3.25,3.25],
+      "persist":False,
+      "params":{
+        "SMILE_CLOSED":1.0,
+        "EXPR_SAD": 1.0,
+        "BROW_DOWN_LEFT":0.8,
+        "BROW_DOWN_RIGHT":0.8,
+        "LOOK_DOWN":0.2,
+        "NECK_TILT":10
+        }
+    },
+    {
+      "time":[5.0],
+      "persist":False,
+      "params":{
+        "reset":True
+        }
+    }],
+    "class": "furhatos.gestures.Gesture"
+    })
+
+# Surprise expression
+def Perform_SurprisedExpression():
+    furhat.gesture(body={
+    "frames":[
+    {
+      "time":[1.0,1.5,1.5],
+      "persist":True,
+      "params":{
+        "SURPRISE": 1.0,
+        "BROW_UP_LEFT":1.0,
+        "BROW_UP_RIGHT":1.0,
+        "NECK_TILT":-8
+        }
+    },
+    {
+      "time":[5.0],
+      "persist":False,
+      "params":{
+        "reset":True
+        }
+    }],
+    "class": "furhatos.gestures.Gesture"
+    })
+
+# Furhat performs expressions
 def perform_emotion_gesture(emotion):
     try:
         if emotion == "happy":
-            gestures_definitions.Perform_HappyExpression()
+            Perform_HappyExpression()
         elif emotion == "sad":
-            gestures_definitions.Perform_SadExpression()
+            Perform_SadExpression()
         elif emotion == "angry":
-            gestures_definitions.Perform_AngryExpression()
+            Perform_AngryExpression()
         elif emotion == "surprised":
-            gestures_definitions.Perform_SurprisedExpression()
+            Perform_SurprisedExpression()
         elif emotion == "disgust":
-            gestures_definitions.Perform_DisgustExpression()
+            Perform_DisgustExpression()
         elif emotion == "fear":
-            gestures_definitions.Perform_FearExpression()
+            Perform_FearExpression()
         else:
-            gestures_definitions.Perform_NeutralExpression()
+            Perform_NeutralExpression()
     except Exception as e:
         print(f"Error performing gesture: {e}")
 
-# 主邏輯
+# Main logic
 while True:
-    # 偵測使用者情緒
+    # Detect user emotion
     user_emotion = detect_user_emotion()
     print("Detected user emotion:", user_emotion)
 
-    # 獲取用戶語音輸入
+    # Get user speech input
     user_speech = get_user_input()
     if not user_speech:
-        continue  # 如果未成功獲取用戶輸入，跳過本輪
+        continue  # Skip this round if user input is not successfully received
 
     print("User said:", user_speech)
-    # 檢查結束條件
+    # Check exit condition
     if "bye" in user_speech.lower():
         furhat.say(text="Goodbye! Have a nice day!")
         break
-    # 構造 Prompt，包含對話歷史
+    # Construct prompt, including conversation history
     conversation_history.append(f"User ({user_emotion}): {user_speech}")
-    history_text = "\n".join(conversation_history[-10:])  # 保留最近10條對話
+    history_text = "\n".join(conversation_history[-10:])  # Keep the last 10 lines of conversation
 
     prompt = f"""
     You are a friendly and empathetic bartender in a cozy bar. Continue the conversation with the user below. Make sure your response is coherent and keeps the context of the previous exchanges.
@@ -98,13 +262,13 @@ while True:
     Respond concisely with at most two sentences.
     """
 
-    # 調用 LLM
+    # Call LLM
     llm_response = call_gemini_api(prompt)
     print("LLM Response:", llm_response)
 
-    # Furhat 說出回應
+    # Furhat speaks the response
     furhat.say(text=llm_response)
     conversation_history.append(f"Bartender: {llm_response}")
 
-    # 執行表情同步
+    # Perform expression synchronization
     perform_emotion_gesture(user_emotion)
