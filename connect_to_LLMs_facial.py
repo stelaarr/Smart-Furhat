@@ -1,22 +1,22 @@
 from furhat_remote_api import FurhatRemoteAPI
 import google.generativeai as genai
 
-# 設定 Google Gemini API
+# Set up Google Gemini API
 api_key = 'AIzaSyCLhiQiYG5lkWEEXacUYyzqoLMm-xdTFpc'  
 genai.configure(api_key=api_key)
 
-# 初始化 Furhat
+# Initialize Furhat
 furhat = FurhatRemoteAPI("localhost")
 furhat.say(text="Welcome! Good to see you tonight. Take a seat wherever you like. How’s your day been so far?")
 
-# 初始化對話歷史
+# Initialize conversation history
 conversation_history = []
 
-# 模擬偵測使用者表情
+# Simulate detecting user emotion
 def detect_user_emotion():
-    return "angry"  # 模擬情緒（可擴展）
+    return "angry"  # Simulated emotion (can be expanded)
 
-# 接收用戶輸入
+# Receive user input
 def get_user_input():
     try:
         response = furhat.listen()
@@ -28,7 +28,7 @@ def get_user_input():
         print(f"Error during listening: {e}")
         return None
 
-# 呼叫 LLM（Google Gemini API）
+# Call LLM (Google Gemini API)
 def call_gemini_api(prompt):
     try:
         model = genai.GenerativeModel('gemini-pro')
@@ -41,7 +41,7 @@ def call_gemini_api(prompt):
         print(f"Error calling Google Gemini API: {e}")
         return "Sorry, I encountered an issue and couldn't process your request."
 
-# 表情函數定義（略，與你上面提供的一樣）
+# Define functions for facial expressions
 def Perform_AngryExpression():
     furhat.gesture(body={
         "frames": [
@@ -200,7 +200,7 @@ def Perform_SurprisedExpression():
         "class": "furhatos.gestures.Gesture"
     })
 
-# Furhat 執行表情
+# Execute expressions with Furhat
 def perform_emotion_gesture(emotion):
     try:
         if emotion == "happy":
@@ -221,28 +221,28 @@ def perform_emotion_gesture(emotion):
         print(f"Error performing gesture: {e}")
 
 
-# 主邏輯
+# Main logic
 while True:
-    # 偵測使用者情緒
+    # Detect user emotion
     user_emotion = detect_user_emotion()
     print("Detected user emotion:", user_emotion)
 
-    # 獲取用戶語音輸入
+    # Get user speech input
     user_speech = get_user_input()
     if not user_speech:
-        continue  # 如果未成功獲取用戶輸入，跳過本輪
+        continue  # Skip this round if user input is not successfully received
 
     print("User said:", user_speech)
-    # 檢查結束條件
+    # Check exit condition
     if "bye" in user_speech.lower():
         furhat.say(text="Goodbye! Have a nice day!")
         break
     
-    # 將使用者的語句與情緒加入歷史
+    # Add user's message and emotion to conversation history
     conversation_history.append(f"User (Emotion: {user_emotion}): {user_speech}")
-    history_text = "\n".join(conversation_history[-10:])  # 保留最近10條對話
+    history_text = "\n".join(conversation_history[-10:])  # Keep the last 10 lines of conversation
     
-    # 修改 prompt，要求 LLM 同時產生文字回應與表情
+    # Modify prompt to request LLM to generate both text responses and expressions
     prompt = f"""
     You are a friendly and empathetic bartender in a cozy bar. The user speaks and you also detect their emotion.
     Below is the conversation history, which includes the user's emotion and their message.
@@ -264,28 +264,28 @@ while True:
     Make sure the second line is just one of the allowed emotions.
     """
 
-    # 調用 LLM
+    # Call LLM
     llm_response = call_gemini_api(prompt)
     print("LLM Response (raw):", llm_response)
 
-    # 將 LLM 回覆分成兩行
+    # Split LLM response into two lines
     lines = llm_response.split('\n')
     if len(lines) < 2:
-        # 如果沒拿到兩行，則給預設值
+        # Provide default values if response does not have two lines
         furhat_text = "Sorry, I didn't understand that."
         furhat_emotion = "neutral"
     else:
         furhat_text = lines[0].strip()
         furhat_emotion = lines[1].strip().lower()
     
-    # 確保表情輸出是預期之一
+    # Ensure the expression output is one of the expected ones
     allowed_emotions = ["happy", "sad", "surprised", "fear", "disgust", "neutral", "angry"]
     if furhat_emotion not in allowed_emotions:
         furhat_emotion = "neutral"
 
-    # Furhat 說出回應
+    # Furhat speaks the response
     furhat.say(text=furhat_text)
     conversation_history.append(f"Bartender: {furhat_text} (Emotion: {furhat_emotion})")
 
-    # 執行表情同步
+    # Execute emotion gesture synchronously
     perform_emotion_gesture(furhat_emotion)
