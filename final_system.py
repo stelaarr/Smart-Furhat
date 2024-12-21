@@ -12,6 +12,7 @@ import google.generativeai as genai
 # =====================
 running = True                 # Used to control loop termination
 current_emotion = "neutral"    # Store the currently detected emotion
+last_faces = []  # Cache for face coordinates
 frame_count = 0
 FRAME_INTERVAL = 50            # Analyze emotion every 50 frames
 conversation_history = []
@@ -234,7 +235,7 @@ def call_gemini_api(prompt):
 # Camera Thread
 # =====================
 def camera_loop():
-    global running, frame_count, current_emotion
+    global running, frame_count, current_emotion, last_faces,FRAME_INTERVAL
     print("[Camera Thread] Started.")
     while running:
         ret, frame = cap.read()
@@ -253,6 +254,7 @@ def camera_loop():
                 faces = face_tracker.detectMultiScale(gray_frame)
                 if len(faces) > 0:
                     (x1, y1, w, h) = faces[0]
+                    last_faces = faces
                     face_frame = frame[y1:y1+h, x1:x1+w]
                     face_frame_tensor = transform(Image.fromarray(face_frame)).unsqueeze(0).to(device)
                     with torch.no_grad():
@@ -265,6 +267,14 @@ def camera_loop():
                     pass
             except Exception as e:
                 print(f"[Camera Thread] Error analyzing emotion: {e}")
+        if len(last_faces)>0:
+            x, y, w, h = last_faces[0]
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Green rectangle
+            cv2.putText(frame, current_emotion.capitalize(), (x, y - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)  # Emotion text
+
+                # Display the webcam feed with annotations
+        cv2.imshow("Webcam", frame)
 
         # Check if 'q' is pressed to quit
         if cv2.waitKey(1) & 0xFF == ord('q'):
