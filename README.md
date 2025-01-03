@@ -9,7 +9,7 @@ Due to the large size of the trained model, it has been uploaded to Hugging Face
 ### Download
 
 Download the model from the following link:
-[ResEmoteNetBS32.pth](https://huggingface.co/neilchouGTX/ResEmoteNet_Four_datasets/blob/main/ResEmoteNetBS32.pth)
+[ResEmoteNetBS32.pth](https://huggingface.co/neilchouGTX/ResEmoteNet_Four_datasets_BatchSize32/blob/main/ResEmoteNetBS32.pth)
 
 ### Create a Folder
 

@@ -1,0 +1,13 @@
+Model Checkpoint download links:
+
+1. ResEmoteNet Pre-trained models (FER2013 and RAF-DB):
+https://drive.google.com/drive/folders/1Daxa6d1-XFxxpg6dyxYl4V-anfiHwtqK
+
+2. ResEmoteNet_Four_datasets_BatchSize128:
+https://huggingface.co/neilchouGTX/ResEmoteNet_Four_datasets_BatchSize128/blob/main/ResEmoteNetBS128.pth
+
+3. ResEmoteNet_Four_datasets_BatchSize64:
+https://huggingface.co/neilchouGTX/ResEmoteNet_Four_datasets_BatchSize64/blob/main/ResEmoteNetBS64.pth
+
+4. ResEmoteNet_Four_datasets_(Best Model):
+https://huggingface.co/neilchouGTX/ResEmoteNet_Four_datasets_BatchSize32/blob/main/ResEmoteNetBS32.pth
